@@ -3,14 +3,17 @@ package com.codepath.android.lollipopexercise.activities;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.android.lollipopexercise.R;
 import com.codepath.android.lollipopexercise.adapters.ContactsAdapter;
 import com.codepath.android.lollipopexercise.models.Contact;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -19,6 +22,10 @@ public class ContactsActivity extends AppCompatActivity {
     private RecyclerView rvContacts;
     private ContactsAdapter mAdapter;
     private List<Contact> contacts;
+
+    MenuItem addBtn;
+    Menu menuBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +59,11 @@ public class ContactsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_contacts, menu);
+
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -61,7 +71,23 @@ public class ContactsActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onComposeAction(MenuItem mi) {
+        Snackbar.make(findViewById(R.id.rlMainContent), "Contact Added!", Snackbar.LENGTH_LONG)
+                .setDuration(3000)
+                .setAction("Undo", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        contacts.remove(contacts.size() - 1);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setActionTextColor(ContextCompat.getColor(ContactsActivity.this, R.color.accent))
+                .show();
+        contacts.add(Contact.getRandomContact(this));
+        mAdapter.notifyDataSetChanged();
+
     }
 }
